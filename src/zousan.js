@@ -28,6 +28,15 @@
 		// 		you can starve the UI and be unresponsive to the user.
 		// This is an even FASTER version of https://gist.github.com/bluejava/9b9542d1da2a164d0456 that gives up
 		// passing context and arguments, in exchange for a 25x speed increase. (Use anon function to pass context/args)
+		function extend(x, y) {
+			for (var key in y) {
+				if (y.hasOwnProperty(key)) {
+					x[key] = y[key]
+				}
+			}
+			return x
+		}
+		
 		var soon = (function() {
 
 				var	fq = [], // function queue;
@@ -119,7 +128,7 @@
 			}
 		}
 
-		Zousan.prototype = {	// Add 6 functions to our prototype: "resolve", "reject", "then", "catch", "finally" and "timeout"
+		Zousan.prototype = extend(Zousan.prototype, {	// Add 6 functions to our prototype: "resolve", "reject", "then", "catch", "finally" and "timeout"
 
 				resolve: function(value)
 				{
@@ -183,15 +192,15 @@
 					else
 						soon(function() {
 							if(!me.handled) {
-								if(!Zousan.suppressUncaughtRejectionError && global.console)
-									Zousan.warn("You upset Zousan. Please catch rejections: ", reason,reason ? reason.stack : null)
+								if(!me.constructor.suppressUncaughtRejectionError && global.console)
+									me.constructor.warn("You upset Zousan. Please catch rejections: ", reason,reason ? reason.stack : null)
 							}
 						});
 				},
 
 				then: function(onF,onR)
 				{
-					var p = new Zousan();
+					var p = new this.constructor();
 					var client = {y:onF,n:onR,p:p};
 
 					if(this.state === STATE_PENDING)
@@ -229,7 +238,7 @@
 				{
 					timeoutMsg = timeoutMsg || "Timeout"
 					var me = this;
-					return new Zousan(function(resolve,reject) {
+					return new this.constructor(function(resolve,reject) {
 
 							setTimeout(function() {
 									reject(Error(timeoutMsg));	// This will fail silently if promise already resolved or rejected
@@ -241,7 +250,7 @@
 						})
 				}
 
-			}; // END of prototype function list
+		}); // END of prototype function list
 
 		function resolveClient(c,arg)
 		{
