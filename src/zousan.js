@@ -169,7 +169,7 @@
 					if(me.c)
 						soon(function() {
 								for(var n=0, l=me.c.length;n<l;n++)
-									resolveClient(me.c[n],value);
+									me.constructor.resolveClient(me.c[n],value);
 							});
 				},
 
@@ -187,7 +187,7 @@
 					if(clients)
 						soon(function() {
 								for(var n=0, l=clients.length;n<l;n++)
-									rejectClient(clients[n],reason);
+									me.constructor.rejectClient(clients[n],reason);
 							});
 					else
 						soon(function() {
@@ -218,11 +218,13 @@
 						// In the case that the original promise is already fulfilled, any uncaught rejection should already have been warned about
 						this.handled = true; // set promise as "handled" to suppress warning for unhandled rejections
 
+            var me = this
+						
 						soon(function() { // we are not pending, so yield script and resolve/reject as needed
 								if(s === STATE_FULFILLED)
-									resolveClient(client,a);
+									me.constructor.resolveClient(client,a);
 								else
-									rejectClient(client,a);
+									me.constructor.rejectClient(client,a);
 							});
 					}
 
@@ -283,6 +285,8 @@
 
 		// "Class" functions follow (utility functions that live on the Zousan function object itself)
 
+  	Zousan.resolveClient = resolveClient
+		Zousan.rejectClient = rejectClient
 		Zousan.resolve = function(val) { var z = new this(); z.resolve(val); return z; }
 
 		Zousan.reject = function(err) {
