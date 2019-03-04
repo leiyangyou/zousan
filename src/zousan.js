@@ -97,6 +97,8 @@
 
 			})();
 
+		var originalSoon = soon;
+		
 		// -------- BEGIN our main "class" definition here -------------
 
 		function Zousan(func)
@@ -336,5 +338,15 @@
 
 		// make soon accessable from Zousan
 		Zousan.soon = soon;
+		
+		Zousan.setSoon = function (scheduler) {
+			soon = scheduler
+			Zousan.soon = scheduler
+		}
+		
+		Zousan.resetSoon = function () {
+			soon = originalSoon
+			Zousan.soon = originalSoon
+		}
 
 	})(typeof global != "undefined" ? global : this);	// jshint ignore:line
