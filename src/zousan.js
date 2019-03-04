@@ -274,10 +274,10 @@
 
 		// "Class" functions follow (utility functions that live on the Zousan function object itself)
 
-		Zousan.resolve = function(val) { var z = new Zousan(); z.resolve(val); return z; }
+		Zousan.resolve = function(val) { var z = new this(); z.resolve(val); return z; }
 
 		Zousan.reject = function(err) {
-				var z = new Zousan()
+				var z = new this()
 				z.c=[] // see https://github.com/bluejava/zousan/issues/7#issuecomment-415394963
 				z.reject(err)
 				return z
@@ -285,12 +285,13 @@
 
 		Zousan.all = function(pa)
 		{
-			var results = [ ], rc = 0, retP = new Zousan(); // results and resolved count
+			var that = this
+			var results = [ ], rc = 0, retP = new this(); // results and resolved count
 
 			function rp(p,i)
 			{
 				if(!p || typeof p.then !== "function")
-					p = Zousan.resolve(p);
+					p = that.resolve(p);
 				p.then(
 						function(yv) { results[i] = yv; rc++; if(rc == pa.length) retP.resolve(results); },
 						function(nv) { retP.reject(nv); }
