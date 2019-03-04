@@ -9,7 +9,7 @@
 	},
 	"scripts":
 	{
-		"test": "cd test; npm install; npm test",
+		"test": "cd test; yarn install; yarn test",
 		"build": "uglifyjs src/zousan.js -c -m -o zousan-min.js"
 	},
 	"repository":
